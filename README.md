@@ -137,7 +137,8 @@ If Twitch changes its private web API, update that module and its mocked tests f
 
 - The overlay sends the configured public channel login to Twitch's GraphQL endpoint.
 - It stores only normalized progress data in the local browser/OBS profile.
-- It includes no analytics, trackers, third-party runtime dependencies, or external fonts.
+- It uses Simple Analytics for privacy-first aggregate page-view analytics; JavaScript-disabled clients use Simple Analytics' supplied tracking-image fallback.
+- It includes no external fonts or other third-party runtime dependencies.
 - No OAuth token is required. Do not add client secrets, access tokens, or broadcaster credentials.
 - GitHub Pages source, workflow configuration, and the public Twitch web-client ID are visible to anyone who can access the repository or site.
 
