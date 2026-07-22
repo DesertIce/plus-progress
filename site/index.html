@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Twitch Plus Program Progress</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main id="overlay" class="overlay" data-state="loading" aria-live="polite">
+      <section class="overlay-card" aria-labelledby="overlay-title">
+        <header class="header-row">
+          <div class="brand-lockup">
+            <span class="plus-mark" aria-hidden="true">+</span>
+            <div>
+              <h1 id="overlay-title">Plus Program</h1>
+              <p id="month-label" class="month-label">Current month · UTC</p>
+            </div>
+          </div>
+          <span id="state-badge" class="state-badge">Connecting</span>
+        </header>
+
+        <div id="progress-view" class="progress-view" hidden>
+          <div class="score-row">
+            <p class="score" aria-hidden="true">
+              <strong id="points-current">0</strong>
+              <span class="score-divider">/</span>
+              <span id="points-target">0</span>
+              <span class="score-unit">Plus Points</span>
+            </p>
+            <span id="goal-level" class="goal-level">L1</span>
+          </div>
+
+          <div class="rail-wrap">
+            <div
+              id="progress-rail"
+              class="progress-rail"
+              role="progressbar"
+              aria-label="Plus Program progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <span class="progress-fill" aria-hidden="true"></span>
+              <span class="rail-ticks" aria-hidden="true"></span>
+              <span class="target-bracket" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+
+        <div id="message-view" class="message-view" role="status">
+          <p id="message-title" class="message-title">Loading progress</p>
+          <p id="message-body" class="message-body">Connecting to Twitch for the latest Plus Program total.</p>
+        </div>
+
+        <footer class="footer-row">
+          <span id="status-text" class="status-text">Loading</span>
+          <span id="updated-text" class="updated-text"></span>
+          <button id="refresh-button" class="refresh-button" type="button" hidden>Refresh</button>
+        </footer>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

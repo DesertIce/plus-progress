@@ -1,0 +1,13 @@
+{
+  "name": "twitch-plus-progress-overlay",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static Twitch Plus Program progress overlay for OBS Browser Source",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
