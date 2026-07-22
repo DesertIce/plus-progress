@@ -206,11 +206,19 @@ test('refresh returns the in-flight promise instead of overlapping requests', as
   await first;
 });
 
-test('display labels omit the goal timezone and show relative update seconds', () => {
+test('display labels omit the goal timezone and show relative update minutes', () => {
   assert.equal(formatUtcMonth(2026, 7), 'July 2026');
   assert.equal(
     formatUpdatedAt('2026-07-22T12:34:56Z', new Date('2026-07-22T12:35:04Z')),
-    'Updated 8 seconds ago',
+    'Updated just now',
+  );
+  assert.equal(
+    formatUpdatedAt('2026-07-22T12:34:56Z', new Date('2026-07-22T12:35:56Z')),
+    'Updated 1 minute ago',
+  );
+  assert.equal(
+    formatUpdatedAt('2026-07-22T12:34:56Z', new Date('2026-07-22T12:36:56Z')),
+    'Updated 2 minutes ago',
   );
 });
 
@@ -257,13 +265,13 @@ test('DOM renderer exposes accessible progress and switches to error states safe
   assert.equal(elements['progress-rail'].attributes['aria-valuetext'], '52 of 100 Plus Points');
   assert.equal(elements['status-text'].textContent, '48 points to L1');
   assert.equal(elements['month-label'].textContent, 'July 2026');
-  assert.equal(elements['updated-text'].textContent, 'Updated 0 seconds ago');
-  assert.equal(relativeUpdates[0].delay, 1_000);
+  assert.equal(elements['updated-text'].textContent, 'Updated just now');
+  assert.equal(relativeUpdates[0].delay, 60_000);
   assert.equal(elements['refresh-button'].hidden, true);
 
-  displayedNow = new Date('2026-07-22T12:35:04Z');
+  displayedNow = new Date('2026-07-22T12:35:58Z');
   relativeUpdates[0].callback();
-  assert.equal(elements['updated-text'].textContent, 'Updated 8 seconds ago');
+  assert.equal(elements['updated-text'].textContent, 'Updated 1 minute ago');
 
   const staleData = createProgressResult({ channel: 'somechannel', program: program(), now: NOW });
   render({ kind: 'stale', data: staleData, canRefresh: true });
@@ -291,10 +299,18 @@ test('DOM renderer exposes accessible progress and switches to error states safe
   });
   assert.equal(elements['status-text'].textContent, '1 point to L1');
 
+  render({
+    kind: 'success',
+    data: createProgressResult({ channel: 'somechannel', program: program(), now: displayedNow }),
+  });
+  assert.equal(elements['updated-text'].textContent, 'Updated just now');
+  assert.equal(relativeUpdates.length, 2);
+  assert.deepEqual(cancelledRelativeUpdates, [1]);
+
   render({ kind: 'error', message: '<unsafe details>', canRefresh: true });
   assert.equal(elements['progress-view'].hidden, true);
   assert.equal(elements['message-view'].hidden, false);
   assert.equal(elements['message-body'].textContent, '<unsafe details>');
   assert.equal(elements['refresh-button'].hidden, false);
-  assert.deepEqual(cancelledRelativeUpdates, [1]);
+  assert.deepEqual(cancelledRelativeUpdates, [1, 2]);
 });

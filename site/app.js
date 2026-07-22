@@ -65,12 +65,13 @@ export function formatUtcMonth(year, month) {
 }
 
 export function formatUpdatedAt(value, now = new Date()) {
-  const elapsedSeconds = Math.max(
+  const elapsedMinutes = Math.max(
     0,
-    Math.floor((new Date(now).getTime() - new Date(value).getTime()) / 1_000),
+    Math.floor((new Date(now).getTime() - new Date(value).getTime()) / 60_000),
   );
+  if (elapsedMinutes === 0) return 'Updated just now';
   const relative = new Intl.RelativeTimeFormat('en', { numeric: 'always' })
-    .format(-elapsedSeconds, 'second');
+    .format(-elapsedMinutes, 'minute');
   return `Updated ${relative}`;
 }
 
@@ -116,7 +117,7 @@ export function createDomRenderer(documentRoot = document, {
 
   function startRelativeUpdates() {
     if (relativeUpdateTimer !== null) return;
-    relativeUpdateTimer = scheduleRelativeUpdate(updateRelativeTime, 1_000);
+    relativeUpdateTimer = scheduleRelativeUpdate(updateRelativeTime, 60_000);
   }
 
   function stopRelativeUpdates() {
@@ -147,8 +148,10 @@ export function createDomRenderer(documentRoot = document, {
         'aria-valuetext',
         `${formatPoints(data.points)} of ${formatPoints(data.target)} Plus Points`,
       );
+      const fetchedAtChanged = fetchedAt !== data.fetchedAt;
       fetchedAt = data.fetchedAt;
       updateRelativeTime();
+      if (fetchedAtChanged) stopRelativeUpdates();
       startRelativeUpdates();
 
       if (state.kind === 'completed') {

@@ -90,7 +90,7 @@ The overlay resolves the configured login to a channel ID once per page load. It
 - A missing current-month entry counts as 0 points.
 - `widgetSetting` chooses the displayed L1 or L2 threshold. The broadcaster's `level` is not used as the goal selector.
 - Displayed points may exceed the target; only the visual rail is clamped to 100%.
-- “Updated” counts the seconds since the local successful fetch completion time because Twitch can return a null `updatedAt`.
+- “Updated” shows “just now” for the first minute, then counts minutes since the local successful fetch completion time because Twitch can return a null `updatedAt`.
 - A request is abandoned after about 10 seconds, and overlapping refreshes are suppressed.
 
 Only a fully validated result is cached. Cache entries are versioned and keyed by normalized channel login. Following a transient failure, a valid cache entry for the current UTC month appears with a visible **Stale** badge and its last successful update time.
