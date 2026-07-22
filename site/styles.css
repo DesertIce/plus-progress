@@ -55,7 +55,7 @@ textarea {
   padding: 15px 19px 12px;
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--violet) 34%, var(--line));
-  border-radius: 14px;
+  border-radius: 10px 3px 10px 3px;
   background:
     linear-gradient(100deg, #211a31f2 0%, var(--panel) 45%, #121019f2 100%);
   box-shadow:
@@ -179,7 +179,7 @@ h1 {
 
 .score strong {
   color: var(--text);
-  font-size: 21px;
+  font-size: 25px;
   font-weight: 780;
   letter-spacing: -0.045em;
 }
@@ -280,7 +280,7 @@ h1 {
   min-height: 14px;
   gap: 8px;
   color: var(--muted);
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 650;
   letter-spacing: 0.045em;
   line-height: 1;
@@ -305,7 +305,7 @@ h1 {
 
 .updated-text {
   margin-left: auto;
-  color: #8d869b;
+  color: #a39cab;
   font-variant-numeric: tabular-nums;
 }
 
@@ -317,7 +317,7 @@ h1 {
   background: #a970ff17;
   color: var(--text);
   cursor: pointer;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.07em;
   text-transform: uppercase;

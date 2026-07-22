@@ -38,6 +38,18 @@ All site assets use relative URLs, so GitHub project subpaths work without confi
 
 The page background is transparent. The channel value is trimmed, a leading `@` is removed, and the login is matched case-insensitively.
 
+### Recommended output sizing
+
+Keep the Browser Source resolution at its native **800 × 140** for every output resolution, then scale the source as a scene item in OBS. This keeps the overlay layout consistent instead of causing it to reflow.
+
+| OBS output canvas | Browser Source resolution | Approximate displayed size | Scene-item scale |
+| --- | --- | --- | --- |
+| 1280 × 720 (720p) | 800 × 140 | 533 × 93 | 66.7% |
+| 1920 × 1080 (1080p) | 800 × 140 | 800 × 140 | 100% |
+| 2560 × 1440 (2K/QHD) | 800 × 140 | 1067 × 187 | 133.3% |
+
+These sizes preserve the overlay's relative footprint from the 1080p baseline. Fine-tune its scale and position to suit the rest of the scene.
+
 Example:
 
 ```text
@@ -72,13 +84,13 @@ The deterministic tests use Node's built-in test runner and mocked `fetch`; they
 
 ## How progress is calculated
 
-The overlay resolves the configured login to a channel ID once per page load. It then refreshes Plus Program status immediately and every 60 seconds.
+The overlay resolves the configured login to a channel ID once per page load. It then refreshes Plus Program status immediately and every 10 minutes.
 
 - The current period is selected with the UTC year and month, regardless of response order.
 - A missing current-month entry counts as 0 points.
 - `widgetSetting` chooses the displayed L1 or L2 threshold. The broadcaster's `level` is not used as the goal selector.
 - Displayed points may exceed the target; only the visual rail is clamped to 100%.
-- “Updated” uses the local successful fetch completion time because Twitch can return a null `updatedAt`.
+- “Updated” counts the seconds since the local successful fetch completion time because Twitch can return a null `updatedAt`.
 - A request is abandoned after about 10 seconds, and overlapping refreshes are suppressed.
 
 Only a fully validated result is cached. Cache entries are versioned and keyed by normalized channel login. Following a transient failure, a valid cache entry for the current UTC month appears with a visible **Stale** badge and its last successful update time.
@@ -99,7 +111,7 @@ The broadcaster may not be in the Plus Program, may have disabled the Plus widge
 
 ### Stale value
 
-The last valid value is being retained because Twitch could not be reached or returned an API error. The update time shows when that value was fetched successfully. Use **Refresh** to retry immediately; automatic refresh continues every 60 seconds.
+The last valid value is being retained because Twitch could not be reached or returned an API error. The update time shows when that value was fetched successfully. Use **Refresh** to retry immediately; automatic refresh continues every 10 minutes.
 
 ### OBS still shows an older deployment
 

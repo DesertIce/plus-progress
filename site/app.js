@@ -8,7 +8,7 @@ import {
   serializeCache,
 } from './progress.js';
 
-const DEFAULT_REFRESH_INTERVAL = 60_000;
+const DEFAULT_REFRESH_INTERVAL = 600_000;
 const SAFE_ERROR_MESSAGE = 'Progress is temporarily unavailable. Try again shortly.';
 
 const MESSAGE_STATES = {
@@ -57,32 +57,38 @@ const MESSAGE_STATES = {
 };
 
 export function formatUtcMonth(year, month) {
-  const label = new Intl.DateTimeFormat('en', {
+  return new Intl.DateTimeFormat('en', {
     month: 'long',
     year: 'numeric',
     timeZone: 'UTC',
   }).format(new Date(Date.UTC(year, month - 1, 1)));
-  return `${label} · UTC`;
 }
 
-export function formatUpdatedAt(value) {
-  const date = new Date(value);
-  const parts = new Intl.DateTimeFormat('en', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hourCycle: 'h23',
-    timeZone: 'UTC',
-  }).format(date);
-  return `Updated ${parts} UTC`;
+export function formatUpdatedAt(value, now = new Date()) {
+  const elapsedSeconds = Math.max(
+    0,
+    Math.floor((new Date(now).getTime() - new Date(value).getTime()) / 1_000),
+  );
+  const relative = new Intl.RelativeTimeFormat('en', { numeric: 'always' })
+    .format(-elapsedSeconds, 'second');
+  return `Updated ${relative}`;
 }
 
 function formatPoints(value) {
   return new Intl.NumberFormat('en').format(value);
 }
 
-export function createDomRenderer(documentRoot = document) {
+function formatGoalDistance(data) {
+  const remaining = Math.max(0, data.target - data.points);
+  const unit = remaining === 1 ? 'point' : 'points';
+  return `${formatPoints(remaining)} ${unit} to ${data.goalLevel}`;
+}
+
+export function createDomRenderer(documentRoot = document, {
+  now = () => new Date(),
+  scheduleRelativeUpdate = (callback, delay) => globalThis.setInterval(callback, delay),
+  cancelRelativeUpdate = (timer) => globalThis.clearInterval(timer),
+} = {}) {
   const element = (id) => documentRoot.getElementById(id);
   const elements = {
     overlay: element('overlay'),
@@ -100,8 +106,26 @@ export function createDomRenderer(documentRoot = document) {
     messageBody: element('message-body'),
     refreshButton: element('refresh-button'),
   };
+  let fetchedAt = null;
+  let relativeUpdateTimer = null;
 
-  return function render(state) {
+  function updateRelativeTime() {
+    if (fetchedAt === null) return;
+    elements.updatedText.textContent = formatUpdatedAt(fetchedAt, now());
+  }
+
+  function startRelativeUpdates() {
+    if (relativeUpdateTimer !== null) return;
+    relativeUpdateTimer = scheduleRelativeUpdate(updateRelativeTime, 1_000);
+  }
+
+  function stopRelativeUpdates() {
+    if (relativeUpdateTimer === null) return;
+    cancelRelativeUpdate(relativeUpdateTimer);
+    relativeUpdateTimer = null;
+  }
+
+  function render(state) {
     const hasProgress = ['success', 'completed', 'stale'].includes(state.kind);
     elements.overlay.dataset.state = state.kind;
     elements.progressView.hidden = !hasProgress;
@@ -123,17 +147,21 @@ export function createDomRenderer(documentRoot = document) {
         'aria-valuetext',
         `${formatPoints(data.points)} of ${formatPoints(data.target)} Plus Points`,
       );
-      elements.updatedText.textContent = formatUpdatedAt(data.fetchedAt);
+      fetchedAt = data.fetchedAt;
+      updateRelativeTime();
+      startRelativeUpdates();
 
       if (state.kind === 'completed') {
         elements.stateBadge.textContent = 'Goal complete';
         elements.statusText.textContent = 'Target reached';
       } else if (state.kind === 'stale') {
         elements.stateBadge.textContent = 'Stale';
-        elements.statusText.textContent = 'Cached value · Twitch unavailable';
+        elements.statusText.textContent = data.points >= data.target
+          ? 'Cached · target reached'
+          : `Cached · ${formatGoalDistance(data)}`;
       } else {
         elements.stateBadge.textContent = 'Live';
-        elements.statusText.textContent = 'Public Plus goal';
+        elements.statusText.textContent = formatGoalDistance(data);
       }
       return;
     }
@@ -143,8 +171,13 @@ export function createDomRenderer(documentRoot = document) {
     elements.messageTitle.textContent = copy.title;
     elements.messageBody.textContent = state.message || copy.body;
     elements.statusText.textContent = copy.status;
+    fetchedAt = null;
+    stopRelativeUpdates();
     elements.updatedText.textContent = '';
-  };
+  }
+
+  render.stop = stopRelativeUpdates;
+  return render;
 }
 
 function readMatchingCache(storage, channel, now) {
@@ -300,7 +333,10 @@ export function bootstrapOverlay(windowRoot = window, documentRoot = document) {
   documentRoot.getElementById('refresh-button').addEventListener('click', () => {
     void controller.refresh();
   });
-  windowRoot.addEventListener('pagehide', controller.stop, { once: true });
+  windowRoot.addEventListener('pagehide', () => {
+    render.stop();
+    controller.stop();
+  }, { once: true });
   void controller.start();
   return controller;
 }
