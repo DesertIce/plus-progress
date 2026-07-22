@@ -24,7 +24,7 @@ branches: [main]
 The deployed URL has this form:
 
 ```text
-https://desertice.github.io/<repository>/?channel=<twitch-login>
+https://desertice.github.io/plus-progress/?channel=<twitch-login>
 ```
 
 All site assets use relative URLs, so GitHub project subpaths work without configuration.
@@ -41,7 +41,7 @@ The page background is transparent. The channel value is trimmed, a leading `@` 
 Example:
 
 ```text
-https://desertice.github.io/twitch-plus-overlay/?channel=somechannel
+https://desertice.github.io/plus-progress/?channel=somechannel
 ```
 
 ## Local preview
@@ -106,7 +106,7 @@ The last valid value is being retained because Twitch could not be reached or re
 Refresh the Browser Source cache in OBS. If needed, add or increment a harmless cache-busting query value:
 
 ```text
-https://desertice.github.io/twitch-plus-overlay/?channel=somechannel&v=2
+https://desertice.github.io/plus-progress/?channel=somechannel&v=2
 ```
 
 ## Maintenance
