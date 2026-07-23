@@ -10,27 +10,19 @@
   </head>
   <body>
     <main id="overlay" class="overlay" data-state="loading" aria-live="polite">
-      <section class="overlay-card" aria-labelledby="overlay-title">
+      <section class="overlay-card" aria-label="Monthly goal progress">
         <header class="header-row">
-          <div class="brand-lockup">
-            <span class="plus-mark" aria-hidden="true">+</span>
-            <div>
-              <h1 id="overlay-title" class="overlay-title">Plus Program</h1>
-              <p id="month-label" class="month-label">Current month</p>
-            </div>
-          </div>
-          <span id="state-badge" class="state-badge">Connecting</span>
+          <p id="month-label" class="month-label">Current month</p>
         </header>
 
         <div id="progress-view" class="progress-view" hidden>
           <div class="score-row">
-            <p class="score" aria-hidden="true">
+            <p class="score">
               <strong id="points-current">0</strong>
               <span class="score-divider">/</span>
-              <span id="points-target">0</span>
-              <span class="score-unit">Plus Points</span>
+              <span id="points-target" class="score-target">0</span>
             </p>
-            <span id="goal-level" class="goal-level">L1</span>
+            <span id="status-text" class="status-text"></span>
           </div>
 
           <div class="rail-wrap">
@@ -38,7 +30,7 @@
               id="progress-rail"
               class="progress-rail"
               role="progressbar"
-              aria-label="Plus Program progress"
+              aria-label="Monthly goal progress"
               aria-valuemin="0"
               aria-valuemax="100"
               aria-valuenow="0"
@@ -52,11 +44,10 @@
 
         <div id="message-view" class="message-view" role="status">
           <p id="message-title" class="message-title">Loading progress</p>
-          <p id="message-body" class="message-body">Connecting to Twitch for the latest Plus Program total.</p>
+          <p id="message-body" class="message-body">Connecting to Twitch for the latest goal total.</p>
         </div>
 
         <footer class="footer-row">
-          <span id="status-text" class="status-text">Loading</span>
           <span id="updated-text" class="updated-text"></span>
           <button id="refresh-button" class="refresh-button" type="button" hidden>Refresh</button>
         </footer>

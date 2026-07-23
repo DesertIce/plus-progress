@@ -33,24 +33,31 @@ All site assets use relative URLs, so GitHub project subpaths work without confi
 
 1. In OBS, add a **Browser** source.
 2. Enter the GitHub Pages URL and append `?channel=<twitch-login>`.
-3. Set the source size to **800 × 140**.
+3. Choose a Browser Source preset from the table below.
 4. Leave custom CSS empty for the default appearance, or follow
    [Customize the overlay with OBS CSS](docs/customizing-with-obs-css.md) to
    apply a theme or adjust individual parts.
 
 The page background is transparent. The channel value is trimmed, a leading `@` is removed, and the login is matched case-insensitively.
 
-### Recommended output sizing
+### Recommended source sizing
 
-Keep the Browser Source resolution at its native **800 × 140** for every output resolution, then scale the source as a scene item in OBS. This keeps the overlay layout consistent instead of causing it to reflow.
+The overlay automatically composes itself from the Browser Source aspect ratio.
+Choose the composition first, then scale the source as a scene item in OBS.
 
-| OBS output canvas | Browser Source resolution | Approximate displayed size | Scene-item scale |
-| --- | --- | --- | --- |
-| 1280 × 720 (720p) | 800 × 140 | 533 × 93 | 66.7% |
-| 1920 × 1080 (1080p) | 800 × 140 | 800 × 140 | 100% |
-| 2560 × 1440 (2K/QHD) | 800 × 140 | 1067 × 187 | 133.3% |
+| Composition | Browser Source resolution | Behavior |
+| --- | --- | --- |
+| Horizontal | 800 × 140 | Score beside a marked goal ruler |
+| Square | 300 × 300 | Compact information tile with no progress fill |
+| Portrait | 300 × 600 | Full-height vertical goal spine |
 
-These sizes preserve the overlay's relative footprint from the 1080p baseline. Fine-tune its scale and position to suit the rest of the scene.
+A horizontal source at `95px` high or less and a portrait source at `110px`
+wide or less replace their rail with a progress-colored background to regain
+space. A square at `139px` wide or high or less removes secondary metadata but
+still has no progress fill.
+
+The source resolution controls layout; scene-item scaling does not cause a
+reflow. Fine-tune the scale and position to suit the rest of the scene.
 
 Example:
 
@@ -91,11 +98,11 @@ The overlay resolves the configured login to a channel ID once per page load. It
 - The current period is selected with the UTC year and month, regardless of response order.
 - A missing current-month entry counts as 0 points.
 - `widgetSetting` chooses the displayed L1 or L2 threshold. The broadcaster's `level` is not used as the goal selector.
-- Displayed points may exceed the target; only the visual rail is clamped to 100%.
+- Displayed points may exceed the target; visual progress is clamped to 100%.
 - “Updated” shows “just now” for the first minute, then counts minutes since the local successful fetch completion time because Twitch can return a null `updatedAt`.
 - A request is abandoned after about 10 seconds, and overlapping refreshes are suppressed.
 
-Only a fully validated result is cached. Cache entries are versioned and keyed by normalized channel login. Following a transient failure, a valid cache entry for the current UTC month appears with a visible **Stale** badge and its last successful update time.
+Only a fully validated result is cached. Cache entries are versioned and keyed by normalized channel login. Following a transient failure, a valid cache entry for the current UTC month appears with visible cached-status copy and its last successful update time.
 
 ## Troubleshooting
 

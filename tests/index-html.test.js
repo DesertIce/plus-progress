@@ -11,3 +11,22 @@ test('page includes the privacy-first Simple Analytics snippet', () => {
     /<noscript><img src="https:\/\/queue\.simpleanalyticscdn\.com\/noscript\.gif" alt="" referrerpolicy="no-referrer-when-downgrade"\/><\/noscript>/,
   );
 });
+
+test('widget markup keeps only the responsive progress composition', () => {
+  for (const retiredClass of [
+    'plus-mark',
+    'overlay-title',
+    'state-badge',
+    'score-unit',
+    'goal-level',
+  ]) {
+    assert.doesNotMatch(html, new RegExp(`class="[^"]*\\b${retiredClass}\\b`));
+  }
+
+  assert.match(
+    html,
+    /<div class="score-row">[\s\S]*?<span id="status-text" class="status-text"><\/span>\s*<\/div>\s*<div class="rail-wrap">/,
+  );
+  assert.match(html, /<p class="score">/);
+  assert.doesNotMatch(html, /<p class="score"[^>]*aria-hidden/);
+});

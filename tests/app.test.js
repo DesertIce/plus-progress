@@ -1,11 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 
 import { createDomRenderer, createOverlayController, formatUpdatedAt, formatUtcMonth } from '../site/app.js';
 import { cacheKeyForChannel, createProgressResult, serializeCache } from '../site/progress.js';
 import { TwitchApiError } from '../site/twitch-api.js';
 
 const NOW = new Date('2026-07-22T12:34:56Z');
+const appSource = await readFile(new URL('../site/app.js', import.meta.url), 'utf8');
 
 function program(overrides = {}) {
   return {
@@ -225,8 +227,7 @@ test('display labels omit the goal timezone and show relative update minutes', (
 test('DOM renderer exposes accessible progress and switches to error states safely', () => {
   const ids = [
     'overlay', 'progress-view', 'message-view', 'month-label', 'points-current', 'points-target',
-    'goal-level', 'progress-rail', 'state-badge', 'status-text', 'updated-text', 'message-title',
-    'message-body', 'refresh-button',
+    'progress-rail', 'status-text', 'updated-text', 'message-title', 'message-body', 'refresh-button',
   ];
   const elements = Object.fromEntries(ids.map((id) => [id, {
     id,
@@ -261,9 +262,10 @@ test('DOM renderer exposes accessible progress and switches to error states safe
   assert.equal(elements['progress-view'].hidden, false);
   assert.equal(elements['message-view'].hidden, true);
   assert.equal(elements['points-current'].textContent, '52');
+  assert.equal(elements.overlay.style.values['--progress'], '52%');
   assert.equal(elements['progress-rail'].attributes['aria-valuenow'], '52');
-  assert.equal(elements['progress-rail'].attributes['aria-valuetext'], '52 of 100 Plus Points');
-  assert.equal(elements['status-text'].textContent, '48 points to L1');
+  assert.equal(elements['progress-rail'].attributes['aria-valuetext'], '52 of 100 points');
+  assert.equal(elements['status-text'].textContent, '48 points to goal');
   assert.equal(elements['month-label'].textContent, 'July 2026');
   assert.equal(elements['updated-text'].textContent, 'Updated just now');
   assert.equal(relativeUpdates[0].delay, 60_000);
@@ -275,7 +277,7 @@ test('DOM renderer exposes accessible progress and switches to error states safe
 
   const staleData = createProgressResult({ channel: 'somechannel', program: program(), now: NOW });
   render({ kind: 'stale', data: staleData, canRefresh: true });
-  assert.equal(elements['status-text'].textContent, 'Cached · 48 points to L1');
+  assert.equal(elements['status-text'].textContent, 'Cached · 48 points to goal');
   assert.equal(elements['refresh-button'].hidden, false);
 
   render({
@@ -297,7 +299,7 @@ test('DOM renderer exposes accessible progress and switches to error states safe
       now: NOW,
     }),
   });
-  assert.equal(elements['status-text'].textContent, '1 point to L1');
+  assert.equal(elements['status-text'].textContent, '1 point to goal');
 
   render({
     kind: 'success',
@@ -313,4 +315,9 @@ test('DOM renderer exposes accessible progress and switches to error states safe
   assert.equal(elements['message-body'].textContent, '<unsafe details>');
   assert.equal(elements['refresh-button'].hidden, false);
   assert.deepEqual(cancelledRelativeUpdates, [1, 2]);
+});
+
+test('renderer source omits live and level-specific display copy', () => {
+  assert.doesNotMatch(appSource, /textContent\s*=\s*['"]Live['"]/);
+  assert.doesNotMatch(appSource, /to \$\{data\.goalLevel\}/);
 });

@@ -13,46 +13,32 @@ const SAFE_ERROR_MESSAGE = 'Progress is temporarily unavailable. Try again short
 
 const MESSAGE_STATES = {
   loading: {
-    badge: 'Connecting',
     title: 'Loading progress',
-    body: 'Connecting to Twitch for the latest Plus Program total.',
-    status: 'Loading',
+    body: 'Connecting to Twitch for the latest goal total.',
   },
   missing_channel: {
-    badge: 'Setup needed',
     title: 'Channel needed',
     body: 'Add ?channel=<twitch-login> to the Browser Source URL.',
-    status: 'Missing channel',
   },
   channel_not_found: {
-    badge: 'Not found',
     title: 'Channel not found',
     body: 'Check the Twitch login in the Browser Source URL.',
-    status: 'Check channel',
   },
   widget_unavailable: {
-    badge: 'Not shared',
     title: 'Goal not publicly shared',
-    body: 'The broadcaster may need to enable and publicly share their Plus Program goal.',
-    status: 'Widget unavailable',
+    body: 'The broadcaster may need to enable and publicly share their monthly goal.',
   },
   plus_status_null: {
-    badge: 'Not shared',
-    title: 'Plus Program goal unavailable',
-    body: 'The broadcaster may need to enable and publicly share their Plus Program goal.',
-    status: 'No public goal',
+    title: 'Goal unavailable',
+    body: 'The broadcaster may need to enable and publicly share their monthly goal.',
   },
   unknown_widget_setting: {
-    badge: 'Unsupported',
     title: 'Goal setting unsupported',
-    body: 'This channel uses a Plus Program goal setting this overlay does not recognize.',
-    status: 'Update needed',
+    body: 'This channel uses a goal setting this overlay does not recognize.',
   },
   error: {
-    badge: 'Offline',
     title: 'Progress unavailable',
     body: SAFE_ERROR_MESSAGE,
-    status: 'Connection issue',
   },
 };
 
@@ -82,7 +68,7 @@ function formatPoints(value) {
 function formatGoalDistance(data) {
   const remaining = Math.max(0, data.target - data.points);
   const unit = remaining === 1 ? 'point' : 'points';
-  return `${formatPoints(remaining)} ${unit} to ${data.goalLevel}`;
+  return `${formatPoints(remaining)} ${unit} to goal`;
 }
 
 export function createDomRenderer(documentRoot = document, {
@@ -98,9 +84,7 @@ export function createDomRenderer(documentRoot = document, {
     monthLabel: element('month-label'),
     pointsCurrent: element('points-current'),
     pointsTarget: element('points-target'),
-    goalLevel: element('goal-level'),
     progressRail: element('progress-rail'),
-    stateBadge: element('state-badge'),
     statusText: element('status-text'),
     updatedText: element('updated-text'),
     messageTitle: element('message-title'),
@@ -139,14 +123,13 @@ export function createDomRenderer(documentRoot = document, {
       elements.monthLabel.textContent = formatUtcMonth(data.year, data.month);
       elements.pointsCurrent.textContent = formatPoints(data.points);
       elements.pointsTarget.textContent = formatPoints(data.target);
-      elements.goalLevel.textContent = data.goalLevel;
-      elements.progressRail.style.setProperty('--progress', `${data.visualPercentage}%`);
+      elements.overlay.style.setProperty('--progress', `${data.visualPercentage}%`);
       elements.progressRail.setAttribute('aria-valuemin', '0');
       elements.progressRail.setAttribute('aria-valuemax', data.target);
       elements.progressRail.setAttribute('aria-valuenow', displayedNow);
       elements.progressRail.setAttribute(
         'aria-valuetext',
-        `${formatPoints(data.points)} of ${formatPoints(data.target)} Plus Points`,
+        `${formatPoints(data.points)} of ${formatPoints(data.target)} points`,
       );
       const fetchedAtChanged = fetchedAt !== data.fetchedAt;
       fetchedAt = data.fetchedAt;
@@ -155,25 +138,20 @@ export function createDomRenderer(documentRoot = document, {
       startRelativeUpdates();
 
       if (state.kind === 'completed') {
-        elements.stateBadge.textContent = 'Goal complete';
         elements.statusText.textContent = 'Target reached';
       } else if (state.kind === 'stale') {
-        elements.stateBadge.textContent = 'Stale';
         elements.statusText.textContent = data.points >= data.target
           ? 'Cached · target reached'
           : `Cached · ${formatGoalDistance(data)}`;
       } else {
-        elements.stateBadge.textContent = 'Live';
         elements.statusText.textContent = formatGoalDistance(data);
       }
       return;
     }
 
     const copy = MESSAGE_STATES[state.kind] ?? MESSAGE_STATES.error;
-    elements.stateBadge.textContent = copy.badge;
     elements.messageTitle.textContent = copy.title;
     elements.messageBody.textContent = state.message || copy.body;
-    elements.statusText.textContent = copy.status;
     fetchedAt = null;
     stopRelativeUpdates();
     elements.updatedText.textContent = '';
