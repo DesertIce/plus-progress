@@ -42,6 +42,9 @@ they preserve the overlay's layout and state behavior.
 | `--plus-card-height` | `128px` | Card height at the native viewport |
 | `--plus-card-min-height` | `116px` | Minimum card height |
 | `--plus-card-padding` | `15px 19px 12px` | Card content padding |
+| `--plus-card-compact-height` | `auto` | Card height at viewport widths up to 520px |
+| `--plus-card-compact-min-height` | `128px` | Minimum card height at viewport widths up to 520px |
+| `--plus-card-compact-padding-inline` | `14px` | Left and right card padding at viewport widths up to 520px |
 | `--plus-card-border` | `1px solid color-mix(in srgb, var(--plus-color-accent) 34%, #373044)` | Complete card border declaration |
 | `--plus-card-radius` | `10px 3px 10px 3px` | Card corner radii |
 | `--plus-card-background` | `linear-gradient(100deg, #211a31f2 0%, #181521ed 45%, #121019f2 100%)` | Card background |

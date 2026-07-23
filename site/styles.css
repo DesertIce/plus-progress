@@ -13,6 +13,9 @@
   --plus-card-height: 128px;
   --plus-card-min-height: 116px;
   --plus-card-padding: 15px 19px 12px;
+  --plus-card-compact-height: auto;
+  --plus-card-compact-min-height: 128px;
+  --plus-card-compact-padding-inline: 14px;
   --plus-card-border: 1px solid color-mix(in srgb, var(--plus-color-accent) 34%, #373044);
   --plus-card-radius: 10px 3px 10px 3px;
   --plus-card-background: linear-gradient(100deg, #211a31f2 0%, #181521ed 45%, #121019f2 100%);
@@ -405,9 +408,9 @@ p {
   }
 
   .overlay-card {
-    height: auto;
-    min-height: 128px;
-    padding-inline: 14px;
+    height: var(--plus-card-compact-height);
+    min-height: var(--plus-card-compact-min-height);
+    padding-inline: var(--plus-card-compact-padding-inline);
   }
 
   .message-view {
