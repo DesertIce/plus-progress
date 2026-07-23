@@ -133,3 +133,10 @@ test('guide documents every public property, class, and render state', () => {
 test('guide keeps the runtime progress property internal', () => {
   assert.doesNotMatch(guide, /`--progress`/);
 });
+
+test('completed status dot replaces the accent shadow with a success shadow', () => {
+  assert.match(
+    css,
+    /\.overlay\[data-state="completed"\] \.status-text::before\s*\{[^}]*background:\s*var\(--plus-color-success\);[^}]*box-shadow:[^;}]*var\(--plus-color-success\)/s,
+  );
+});

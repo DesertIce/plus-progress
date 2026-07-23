@@ -372,13 +372,18 @@ p {
     0 0 12px color-mix(in srgb, var(--plus-color-success) 41%, transparent);
 }
 
-.overlay[data-state="completed"] .target-bracket,
-.overlay[data-state="completed"] .status-text::before {
+.overlay[data-state="completed"] .target-bracket {
   border-color: var(--plus-color-success);
   background-color: var(--plus-color-success);
   filter: drop-shadow(
     0 0 4px color-mix(in srgb, var(--plus-color-success) 45%, transparent)
   );
+}
+
+.overlay[data-state="completed"] .status-text::before {
+  background: var(--plus-color-success);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--plus-color-success) 44%, transparent);
 }
 
 .overlay[data-state="stale"] .state-badge,
