@@ -1,15 +1,32 @@
 :root {
   color-scheme: dark;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --ink: #111019;
-  --panel: #181521ed;
-  --line: #373044;
-  --text: #f7f5ff;
-  --muted: #b8b2c8;
-  --violet: #a970ff;
-  --violet-bright: #c8a7ff;
-  --success: #73e6b1;
-  --warning: #ffb36b;
+  --plus-font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --plus-heading-font-family: "Arial Narrow", "Roboto Condensed", Impact, ui-sans-serif, system-ui, sans-serif;
+  --plus-color-text: #f7f5ff;
+  --plus-color-muted: #b8b2c8;
+  --plus-color-accent: #a970ff;
+  --plus-color-accent-bright: #c8a7ff;
+  --plus-color-success: #73e6b1;
+  --plus-color-warning: #ffb36b;
+  --plus-overlay-padding: 6px;
+  --plus-card-width: 920px;
+  --plus-card-height: 128px;
+  --plus-card-min-height: 116px;
+  --plus-card-padding: 15px 19px 12px;
+  --plus-card-border: 1px solid color-mix(in srgb, var(--plus-color-accent) 34%, #373044);
+  --plus-card-radius: 10px 3px 10px 3px;
+  --plus-card-background: linear-gradient(100deg, #211a31f2 0%, #181521ed 45%, #121019f2 100%);
+  --plus-card-texture: repeating-linear-gradient(108deg, transparent 0 34px, #ffffff05 35px 36px);
+  --plus-card-shadow: 0 14px 35px #08060d73, inset 0 1px 0 #ffffff12;
+  --plus-progress-height: 12px;
+  --plus-progress-track-border: 1px solid #655a73;
+  --plus-progress-track-background: #09080da6;
+  --plus-progress-fill-background: linear-gradient(90deg, #7644c2, var(--plus-color-accent) 72%, #c5a0ff);
+  --plus-progress-fill-completed-background: linear-gradient(90deg, #2da673, var(--plus-color-success));
+  --plus-progress-fill-shadow: 0 0 12px color-mix(in srgb, var(--plus-color-accent) 42%, transparent);
+  --plus-progress-ticks: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), #f5efff29 calc(10% - 1px) 10%);
+  --plus-progress-transition: width 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  font-family: var(--plus-font-family);
 }
 
 * {
@@ -41,7 +58,7 @@ textarea {
   display: grid;
   width: 100vw;
   min-height: 100vh;
-  padding: 6px;
+  padding: var(--plus-overlay-padding);
   place-items: start center;
 }
 
@@ -49,25 +66,25 @@ textarea {
   position: relative;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  width: min(100%, 920px);
-  height: min(128px, calc(100vh - 12px));
-  min-height: 116px;
-  padding: 15px 19px 12px;
+  width: min(100%, var(--plus-card-width));
+  height: min(
+    var(--plus-card-height),
+    calc(100vh - var(--plus-overlay-padding) - var(--plus-overlay-padding))
+  );
+  min-height: var(--plus-card-min-height);
+  padding: var(--plus-card-padding);
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--violet) 34%, var(--line));
-  border-radius: 10px 3px 10px 3px;
-  background:
-    linear-gradient(100deg, #211a31f2 0%, var(--panel) 45%, #121019f2 100%);
-  box-shadow:
-    0 14px 35px #08060d73,
-    inset 0 1px 0 #ffffff12;
+  border: var(--plus-card-border);
+  border-radius: var(--plus-card-radius);
+  background: var(--plus-card-background);
+  box-shadow: var(--plus-card-shadow);
 }
 
 .overlay-card::before {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: repeating-linear-gradient(108deg, transparent 0 34px, #ffffff05 35px 36px);
+  background: var(--plus-card-texture);
   content: "";
   pointer-events: none;
 }
@@ -104,10 +121,10 @@ textarea {
   height: 24px;
   flex: 0 0 auto;
   place-items: center;
-  border: 1px solid #c9a8ff78;
+  border: 1px solid color-mix(in srgb, var(--plus-color-accent-bright) 47%, transparent);
   border-radius: 7px;
-  background: #a970ff1f;
-  color: var(--violet-bright);
+  background: color-mix(in srgb, var(--plus-color-accent) 12%, transparent);
+  color: var(--plus-color-accent-bright);
   font-size: 20px;
   font-weight: 500;
   line-height: 1;
@@ -118,9 +135,9 @@ p {
   margin: 0;
 }
 
-h1 {
-  color: var(--text);
-  font-family: "Arial Narrow", "Roboto Condensed", Impact, ui-sans-serif, system-ui, sans-serif;
+.overlay-title {
+  color: var(--plus-color-text);
+  font-family: var(--plus-heading-font-family);
   font-size: 14px;
   font-stretch: condensed;
   font-weight: 700;
@@ -131,7 +148,7 @@ h1 {
 
 .month-label {
   margin-top: 4px;
-  color: var(--muted);
+  color: var(--plus-color-muted);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.055em;
@@ -142,10 +159,10 @@ h1 {
 .state-badge,
 .goal-level {
   flex: 0 0 auto;
-  border: 1px solid #a970ff52;
+  border: 1px solid color-mix(in srgb, var(--plus-color-accent) 32%, transparent);
   border-radius: 999px;
-  background: #a970ff17;
-  color: var(--violet-bright);
+  background: color-mix(in srgb, var(--plus-color-accent) 9%, transparent);
+  color: var(--plus-color-accent-bright);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.1em;
@@ -169,7 +186,7 @@ h1 {
 .score {
   display: flex;
   align-items: baseline;
-  color: var(--muted);
+  color: var(--plus-color-muted);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
   font-weight: 650;
@@ -178,7 +195,7 @@ h1 {
 }
 
 .score strong {
-  color: var(--text);
+  color: var(--plus-color-text);
   font-size: 25px;
   font-weight: 780;
   letter-spacing: -0.045em;
@@ -191,7 +208,7 @@ h1 {
 
 .score-unit {
   margin-left: 6px;
-  color: var(--muted);
+  color: var(--plus-color-muted);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.045em;
@@ -210,10 +227,10 @@ h1 {
 .progress-rail {
   --progress: 0%;
   position: relative;
-  height: 12px;
-  border: 1px solid #655a73;
+  height: var(--plus-progress-height);
+  border: var(--plus-progress-track-border);
   border-radius: 4px;
-  background: #09080da6;
+  background: var(--plus-progress-track-background);
   box-shadow: inset 0 1px 3px #00000080;
 }
 
@@ -224,16 +241,16 @@ h1 {
   max-width: calc(100% - 2px);
   min-width: 0;
   border-radius: 2px;
-  background: linear-gradient(90deg, #7644c2, var(--violet) 72%, #c5a0ff);
-  box-shadow: 0 0 12px #a970ff6b;
-  transition: width 650ms cubic-bezier(0.22, 1, 0.36, 1);
+  background: var(--plus-progress-fill-background);
+  box-shadow: var(--plus-progress-fill-shadow);
+  transition: var(--plus-progress-transition);
 }
 
 .rail-ticks {
   position: absolute;
   inset: 1px;
   border-radius: 2px;
-  background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), #f5efff29 calc(10% - 1px) 10%);
+  background: var(--plus-progress-ticks);
   pointer-events: none;
 }
 
@@ -243,10 +260,12 @@ h1 {
   right: -2px;
   width: 7px;
   height: 20px;
-  border: solid var(--violet-bright);
+  border: solid var(--plus-color-accent-bright);
   border-width: 1px 1px 1px 0;
   border-radius: 0 3px 3px 0;
-  filter: drop-shadow(0 0 4px #a970ff80);
+  filter: drop-shadow(
+    0 0 4px color-mix(in srgb, var(--plus-color-accent) 50%, transparent)
+  );
 }
 
 .message-view {
@@ -257,7 +276,7 @@ h1 {
 
 .message-title {
   overflow: hidden;
-  color: var(--text);
+  color: var(--plus-color-text);
   font-size: 18px;
   font-weight: 760;
   letter-spacing: -0.025em;
@@ -269,7 +288,7 @@ h1 {
 .message-body {
   margin-top: 4px;
   overflow: hidden;
-  color: var(--muted);
+  color: var(--plus-color-muted);
   font-size: 11px;
   line-height: 1.25;
   text-overflow: ellipsis;
@@ -279,7 +298,7 @@ h1 {
 .footer-row {
   min-height: 14px;
   gap: 8px;
-  color: var(--muted);
+  color: var(--plus-color-muted);
   font-size: 10px;
   font-weight: 650;
   letter-spacing: 0.045em;
@@ -298,8 +317,9 @@ h1 {
   height: 5px;
   flex: 0 0 auto;
   border-radius: 50%;
-  background: var(--violet);
-  box-shadow: 0 0 6px #a970ff8f;
+  background: var(--plus-color-accent);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--plus-color-accent) 56%, transparent);
   content: "";
 }
 
@@ -312,10 +332,10 @@ h1 {
 .refresh-button {
   margin: -4px 0 -4px 5px;
   padding: 4px 8px;
-  border: 1px solid #a970ff69;
+  border: 1px solid color-mix(in srgb, var(--plus-color-accent) 41%, transparent);
   border-radius: 6px;
-  background: #a970ff17;
-  color: var(--text);
+  background: color-mix(in srgb, var(--plus-color-accent) 9%, transparent);
+  color: var(--plus-color-text);
   cursor: pointer;
   font-size: 10px;
   font-weight: 800;
@@ -324,11 +344,11 @@ h1 {
 }
 
 .refresh-button:hover {
-  background: #a970ff2b;
+  background: color-mix(in srgb, var(--plus-color-accent) 17%, transparent);
 }
 
 .refresh-button:focus-visible {
-  outline: 2px solid var(--text);
+  outline: 2px solid var(--plus-color-text);
   outline-offset: 2px;
 }
 
@@ -338,34 +358,38 @@ h1 {
 
 .overlay[data-state="completed"] .state-badge,
 .overlay[data-state="completed"] .goal-level {
-  border-color: #73e6b166;
-  background: #73e6b119;
-  color: var(--success);
+  border-color: color-mix(in srgb, var(--plus-color-success) 40%, transparent);
+  background: color-mix(in srgb, var(--plus-color-success) 10%, transparent);
+  color: var(--plus-color-success);
 }
 
 .overlay[data-state="completed"] .progress-fill {
-  background: linear-gradient(90deg, #2da673, var(--success));
-  box-shadow: 0 0 12px #73e6b169;
+  background: var(--plus-progress-fill-completed-background);
+  box-shadow:
+    0 0 12px color-mix(in srgb, var(--plus-color-success) 41%, transparent);
 }
 
 .overlay[data-state="completed"] .target-bracket,
 .overlay[data-state="completed"] .status-text::before {
-  border-color: var(--success);
-  background-color: var(--success);
-  filter: drop-shadow(0 0 4px #73e6b173);
+  border-color: var(--plus-color-success);
+  background-color: var(--plus-color-success);
+  filter: drop-shadow(
+    0 0 4px color-mix(in srgb, var(--plus-color-success) 45%, transparent)
+  );
 }
 
 .overlay[data-state="stale"] .state-badge,
 .overlay[data-state="error"] .state-badge {
-  border-color: #ffb36b69;
-  background: #ffb36b17;
-  color: var(--warning);
+  border-color: color-mix(in srgb, var(--plus-color-warning) 41%, transparent);
+  background: color-mix(in srgb, var(--plus-color-warning) 9%, transparent);
+  color: var(--plus-color-warning);
 }
 
 .overlay[data-state="stale"] .status-text::before,
 .overlay[data-state="error"] .status-text::before {
-  background: var(--warning);
-  box-shadow: 0 0 6px #ffb36b70;
+  background: var(--plus-color-warning);
+  box-shadow:
+    0 0 6px color-mix(in srgb, var(--plus-color-warning) 44%, transparent);
 }
 
 @keyframes breathe {
