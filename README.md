@@ -34,7 +34,9 @@ All site assets use relative URLs, so GitHub project subpaths work without confi
 1. In OBS, add a **Browser** source.
 2. Enter the GitHub Pages URL and append `?channel=<twitch-login>`.
 3. Set the source size to **800 × 140**.
-4. Leave custom CSS empty unless the scene needs an additional transform.
+4. Leave custom CSS empty for the default appearance, or follow
+   [Customize the overlay with OBS CSS](docs/customizing-with-obs-css.md) to
+   apply a theme or adjust individual parts.
 
 The page background is transparent. The channel value is trimmed, a leading `@` is removed, and the login is matched case-insensitively.
 

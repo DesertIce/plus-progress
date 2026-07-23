@@ -7,6 +7,12 @@ const [css, html] = await Promise.all([
   readFile(new URL('../site/index.html', import.meta.url), 'utf8'),
 ]);
 
+const [readme, guide, app] = await Promise.all([
+  readFile(new URL('../README.md', import.meta.url), 'utf8'),
+  readFile(new URL('../docs/customizing-with-obs-css.md', import.meta.url), 'utf8'),
+  readFile(new URL('../site/app.js', import.meta.url), 'utf8'),
+]);
+
 export const PUBLIC_CUSTOM_PROPERTIES = [
   '--plus-font-family',
   '--plus-heading-font-family',
@@ -65,6 +71,19 @@ export const PUBLIC_CLASSES = [
   'refresh-button',
 ];
 
+const PUBLIC_STATES = [
+  'loading',
+  'success',
+  'completed',
+  'stale',
+  'error',
+  'missing_channel',
+  'channel_not_found',
+  'widget_unavailable',
+  'plus_status_null',
+  'unknown_widget_setting',
+];
+
 function escapeRegex(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -89,4 +108,25 @@ test('public classes exist in the overlay markup', () => {
 test('progress remains an internal runtime property', () => {
   assert.match(css, /--progress:\s*0%/);
   assert.doesNotMatch(css, /--plus-progress-value/);
+});
+
+test('README links to the OBS CSS customization guide', () => {
+  assert.match(readme, /\[Customize the overlay with OBS CSS\]\(docs\/customizing-with-obs-css\.md\)/);
+});
+
+test('guide documents every public property, class, and render state', () => {
+  for (const property of PUBLIC_CUSTOM_PROPERTIES) {
+    assert.match(guide, new RegExp(escapeRegex(`\`${property}\``)));
+  }
+  for (const className of PUBLIC_CLASSES) {
+    assert.match(guide, new RegExp(escapeRegex(`\`.${className}\``)));
+  }
+  for (const state of PUBLIC_STATES) {
+    assert.match(app, new RegExp(`(?:\\b${escapeRegex(state)}\\s*:|['"]${escapeRegex(state)}['"])`));
+    assert.match(guide, new RegExp(escapeRegex(`\`${state}\``)));
+  }
+});
+
+test('guide keeps the runtime progress property internal', () => {
+  assert.doesNotMatch(guide, /`--progress`/);
 });
